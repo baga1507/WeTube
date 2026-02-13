@@ -5,25 +5,23 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity(name = "videos")
+import java.util.List;
+
+@Entity(name = "users")
 @NoArgsConstructor
 @Getter
 @Setter
-public class Video {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column
-    private String title;
+    private String username;
 
     @Column
-    private String description;
+    private String password;
 
-    @Column
-    private String filename;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @OneToMany(mappedBy = "user")
+    private List<Video> videos;
 }
