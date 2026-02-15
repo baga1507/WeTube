@@ -3,6 +3,7 @@ package com.example.wetube.controllers;
 import com.example.wetube.dto.VideoDto;
 import com.example.wetube.entities.Video;
 import com.example.wetube.mappers.UserMapper;
+import com.example.wetube.mappers.VideoMapper;
 import com.example.wetube.services.VideoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -34,17 +35,23 @@ public class VideoController {
                 createdVideo.getDescription(),
                 UserMapper.toDto(createdVideo.getUser())
         );
-        return new ResponseEntity<>(createdVideoDto, HttpStatus.CREATED);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdVideoDto);
     }
 
     @GetMapping("/{id}")
-    public String getVideoLink(@PathVariable Long id) {
-        return videoService.getVideoLink(id);
+    public ResponseEntity<String> getVideoLink(@PathVariable Long id) {
+        String link = videoService.getVideoLink(id);
+
+        return ResponseEntity.status(HttpStatus.OK).body(link);
     }
 
     @GetMapping("/all")
-    public List<Video> getAllVideoData() {
-        return videoService.getAllVideoData();
+    public ResponseEntity<List<VideoDto>> getAllVideoData() {
+        List<Video> allVideoData = videoService.getAllVideoData();
+        List<VideoDto> allVideoDataDto = allVideoData.stream().map(VideoMapper::toDto).toList();
+
+        return ResponseEntity.status(HttpStatus.OK).body(allVideoDataDto);
     }
 
     public record VideoUploadRequest(String title, String description) {}
