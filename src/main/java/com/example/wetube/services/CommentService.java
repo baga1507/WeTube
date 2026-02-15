@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CommentService {
@@ -31,5 +33,13 @@ public class CommentService {
         comment.setVideo(video);
         comment.setUser(user);
         return commentRepository.save(comment);
+    }
+
+    public List<Comment> getVideoComments(Long videoId) {
+        return commentRepository.findAllByVideoId(videoId);
+    }
+
+    public List<Comment> getAllUserComments(Long userId) {
+        return commentRepository.findAllByUserId(userId);
     }
 }
