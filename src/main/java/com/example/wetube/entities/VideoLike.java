@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity(name = "videolikes")
+@Entity(name = "video_likes")
 @NoArgsConstructor
 @Getter
 @Setter

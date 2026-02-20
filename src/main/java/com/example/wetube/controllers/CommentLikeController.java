@@ -1,6 +1,6 @@
 package com.example.wetube.controllers;
 
-import com.example.wetube.services.VideoLikeService;
+import com.example.wetube.services.CommentLikeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -13,26 +13,26 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 @RequiredArgsConstructor
-public class VideoLikeController {
-    private final VideoLikeService videoLikeService;
+public class CommentLikeController {
+    private final CommentLikeService commentLikeService;
 
-    @PostMapping("/videos/{videoId}/likes")
+    @PostMapping("/comments/{commentId}/likes")
     public ResponseEntity<Void> like(@AuthenticationPrincipal UserDetails user,
-                                  @PathVariable Long videoId) {
-        videoLikeService.like(videoId, user.getUsername());
+                                     @PathVariable Long commentId) {
+        commentLikeService.like(commentId, user.getUsername());
 
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("videos/{videoId}/likes")
-    public ResponseEntity<Long> getVideoLikeCount(@PathVariable Long videoId) {
-        return ResponseEntity.ok(videoLikeService.getVideoLikeCount(videoId));
+    @GetMapping("comments/{commentId}/likes")
+    public ResponseEntity<Long> getVideoLikeCount(@PathVariable Long commentId) {
+        return ResponseEntity.ok(commentLikeService.getVideoLikeCount(commentId));
     }
 
-    @DeleteMapping("/videos/{videoId}/likes")
+    @DeleteMapping("/comments/{commentId}/likes")
     public ResponseEntity<Void> unlike(@AuthenticationPrincipal UserDetails user,
-                                     @PathVariable Long videoId) {
-        videoLikeService.unlike(videoId, user.getUsername());
+                                       @PathVariable Long commentId) {
+        commentLikeService.unlike(commentId, user.getUsername());
 
         return ResponseEntity.ok().build();
     }
