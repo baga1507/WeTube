@@ -8,7 +8,7 @@ public class CommentMapper {
         return new CommentDto(
                 comment.getId(),
                 comment.getText(),
-                VideoMapper.toDto(comment.getVideo()),
+                comment.getVideo().getId(),
                 UserMapper.toDto(comment.getUser())
         );
     }

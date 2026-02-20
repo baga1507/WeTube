@@ -2,6 +2,7 @@ package com.example.wetube.services;
 
 import com.example.wetube.entities.User;
 import com.example.wetube.entities.Video;
+import com.example.wetube.exceptions.VideoNotFoundException;
 import com.example.wetube.exceptions.VideoNotSavedException;
 import com.example.wetube.repositories.UserRepository;
 import com.example.wetube.repositories.VideoRepository;
@@ -19,7 +20,6 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 
-import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
@@ -59,6 +59,10 @@ public class VideoService {
                         .build());
             throw new VideoNotSavedException("Couldn't upload the video");
         }
+    }
+
+    public Video getVideoData(Long id) {
+        return videoRepository.findById(id).orElseThrow(() -> new VideoNotFoundException(id));
     }
 
     public String getVideoLink(Long id) {
