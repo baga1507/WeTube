@@ -35,6 +35,17 @@ public class VideoLikeService {
         videoLikeRepository.save(videoLike);
     }
 
+    @Transactional
+    public void unlike(Long videoId, String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("User with username " + username + " not found"));
+        Video video = videoRepository.findById(videoId).orElseThrow();
+
+        VideoLikeId id = new VideoLikeId(video.getId(), user.getId());
+
+        videoLikeRepository.deleteById(id);
+    }
+
     public Long getVideoLikeCount(Long videoId) {
         return videoLikeRepository.countByVideoId(videoId);
     }
