@@ -5,6 +5,7 @@ import com.example.wetube.entities.Video;
 import com.example.wetube.entities.VideoLike;
 import com.example.wetube.entities.VideoLikeId;
 import com.example.wetube.exceptions.UserNotFoundException;
+import com.example.wetube.exceptions.VideoNotFoundException;
 import com.example.wetube.repositories.UserRepository;
 import com.example.wetube.repositories.VideoLikeRepository;
 import com.example.wetube.repositories.VideoRepository;
@@ -22,8 +23,9 @@ public class VideoLikeService {
     @Transactional
     public void like(Long videoId, String username) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException("User with username " + username + " not found"));
-        Video video = videoRepository.findById(videoId).orElseThrow();
+                .orElseThrow(() -> new UserNotFoundException(username));
+        Video video = videoRepository.findById(videoId)
+                .orElseThrow(() -> new VideoNotFoundException(videoId));
 
         VideoLikeId id = new VideoLikeId(video.getId(), user.getId());
 
@@ -38,8 +40,9 @@ public class VideoLikeService {
     @Transactional
     public void unlike(Long videoId, String username) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException("User with username " + username + " not found"));
-        Video video = videoRepository.findById(videoId).orElseThrow();
+                .orElseThrow(() -> new UserNotFoundException(username));
+        Video video = videoRepository.findById(videoId)
+                .orElseThrow(() -> new VideoNotFoundException(videoId));
 
         VideoLikeId id = new VideoLikeId(video.getId(), user.getId());
 

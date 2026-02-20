@@ -23,10 +23,10 @@ public class CommentService {
 
     @Transactional
     public Comment createComment(String text, Long videoId, String username) {
-        Video video = videoRepository.findById(videoId).orElseThrow(() ->
-                new VideoNotFoundException("Video with id " + videoId + " not found"));
-        User user = userRepository.findByUsername(username).orElseThrow(() ->
-                new UserNotFoundException("User with username " + username + " not found"));
+        Video video = videoRepository.findById(videoId)
+                .orElseThrow(() -> new VideoNotFoundException(videoId));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(username));
 
         Comment comment = new Comment();
         comment.setText(text);
