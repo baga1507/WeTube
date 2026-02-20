@@ -68,8 +68,8 @@ public class VideoService {
     public String getVideoLink(Long id) {
         String filename = videoRepository.findById(id).orElseThrow().getFilename();
 
-        GetObjectRequest request = GetObjectRequest.builder().
-                bucket(bucketName)
+        GetObjectRequest request = GetObjectRequest.builder()
+                .bucket(bucketName)
                 .key(filename)
                 .build();
         PresignedGetObjectRequest presignedRequest = s3Presigner.presignGetObject(GetObjectPresignRequest.builder()
