@@ -7,7 +7,8 @@ import com.example.wetube.services.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,10 +19,10 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping("/videos/{videoId}/comments")
-    public ResponseEntity<CommentDto> createComment(Authentication auth,
+    public ResponseEntity<CommentDto> createComment(@AuthenticationPrincipal UserDetails user,
                                                     @RequestParam String text,
                                                     @PathVariable Long videoId) {
-        Comment comment = commentService.createComment(text, videoId, auth.getName());
+        Comment comment = commentService.createComment(text, videoId, user.getUsername());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(CommentMapper.toDto(comment));
     }

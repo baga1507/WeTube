@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,8 +24,8 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String login(Authentication auth) {
-        return "User is logged in: " + auth.getName();
+    public String login(@AuthenticationPrincipal UserDetails user) {
+        return "User is logged in: " + user.getUsername();
     }
 
     public record RegisterRequest(String username, String password) {}
