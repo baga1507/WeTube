@@ -22,20 +22,13 @@ import java.util.List;
 @RequestMapping("/videos")
 public class VideoController {
     private final VideoService videoService;
-    private final ObjectMapper mapper;
 
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<VideoDto> uploadVideo(Authentication auth,
                                                 @RequestPart("file") MultipartFile file,
-                                                @RequestPart("metadata") String metadata) throws JsonProcessingException {
-        VideoUploadRequest uploadRequest = mapper.readValue(metadata, VideoUploadRequest.class);
-        Video createdVideo = videoService.uploadVideo(file, uploadRequest.title, uploadRequest.description, auth.getName());
-        VideoDto createdVideoDto = new VideoDto(
-                createdVideo.getId(),
-                createdVideo.getTitle(),
-                createdVideo.getDescription(),
-                UserMapper.toDto(createdVideo.getUser())
-        );
+                                                @RequestPart("metadata") VideoUploadRequest metadata) {
+        Video createdVideo = videoService.uploadVideo(file, metadata.title, metadata.description, auth.getName());
+        VideoDto createdVideoDto = VideoMapper.toDto(createdVideo);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(createdVideoDto);
     }
