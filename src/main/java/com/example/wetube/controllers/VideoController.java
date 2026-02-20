@@ -5,6 +5,8 @@ import com.example.wetube.entities.Video;
 import com.example.wetube.mappers.UserMapper;
 import com.example.wetube.mappers.VideoMapper;
 import com.example.wetube.services.VideoService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -12,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class VideoController {
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<VideoDto> uploadVideo(Authentication auth,
                                                 @RequestPart("file") MultipartFile file,
-                                                @RequestPart("metadata") String metadata) {
+                                                @RequestPart("metadata") String metadata) throws JsonProcessingException {
         VideoUploadRequest uploadRequest = mapper.readValue(metadata, VideoUploadRequest.class);
         Video createdVideo = videoService.uploadVideo(file, uploadRequest.title, uploadRequest.description, auth.getName());
         VideoDto createdVideoDto = new VideoDto(

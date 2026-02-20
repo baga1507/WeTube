@@ -4,7 +4,6 @@ import com.example.wetube.entities.User;
 import com.example.wetube.exceptions.UserAlreadyExistsException;
 import com.example.wetube.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
