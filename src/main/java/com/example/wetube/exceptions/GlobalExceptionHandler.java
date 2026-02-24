@@ -19,29 +19,23 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleUserExists(VideoNotSavedException e) {
 
         return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(e.getMessage());
     }
 
-    @ExceptionHandler(VideoNotFoundException.class)
-    public ResponseEntity<String> handleVideoNotFound(VideoNotFoundException e) {
-
+    @ExceptionHandler({
+            VideoNotFoundException.class,
+            UserNotFoundException.class,
+            CommentNotFoundException.class
+    })
+    public ResponseEntity<String> handeNotFound(RuntimeException e) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(e.getMessage());
     }
 
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<String> handleUserNotFound(UserNotFoundException e) {
-
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(e.getMessage());
-    }
-
-    @ExceptionHandler(CommentNotFoundException.class)
-    public ResponseEntity<String> handleCommentNotFound(CommentNotFoundException e) {
-
+    @ExceptionHandler(SubscriptionToOneselfException.class)
+    public ResponseEntity<String> handleSubscriptionToOneself(SubscriptionToOneselfException e) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(e.getMessage());
