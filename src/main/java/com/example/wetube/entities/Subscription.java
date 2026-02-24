@@ -1,0 +1,4 @@
+package com.example.wetube.entities;
+
+public class Subscription {
+}
