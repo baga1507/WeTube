@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity(name = "videos")
 @NoArgsConstructor
@@ -22,6 +25,15 @@ public class Video {
 
     @Column
     private String filename;
+
+    @Column
+    private Long views;
+
+    @Column
+    private Long likeCount;
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

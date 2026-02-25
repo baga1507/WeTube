@@ -3,7 +3,7 @@ package com.example.wetube.controllers;
 import com.example.wetube.dto.VideoDto;
 import com.example.wetube.entities.Video;
 import com.example.wetube.mappers.VideoMapper;
-import com.example.wetube.services.VideoLikeService;
+import com.example.wetube.services.RecommendationService;
 import com.example.wetube.services.VideoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,14 +21,14 @@ import java.util.List;
 @RequestMapping("/videos")
 public class VideoController {
     private final VideoService videoService;
-    private final VideoLikeService likeService;
+    private final RecommendationService recommendationService;
 
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<VideoDto> uploadVideo(@AuthenticationPrincipal UserDetails user,
                                                 @RequestPart("file") MultipartFile file,
                                                 @RequestPart("metadata") VideoUploadRequest metadata) {
         Video createdVideo = videoService.uploadVideo(file, metadata.title, metadata.description, user.getUsername());
-        VideoDto createdVideoDto = VideoMapper.toDto(createdVideo, 0L);
+        VideoDto createdVideoDto = VideoMapper.toDto(createdVideo);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(createdVideoDto);
     }
@@ -36,8 +36,7 @@ public class VideoController {
     @GetMapping("/{id}")
     public ResponseEntity<VideoDto> getVideoData(@PathVariable Long id) {
         Video video = videoService.getVideoData(id);
-        Long likeCount = likeService.getVideoLikeCount(id);
-        VideoDto videoDto = VideoMapper.toDto(video, likeCount);
+        VideoDto videoDto = VideoMapper.toDto(video);
 
         return ResponseEntity.ok(videoDto);
     }
@@ -53,10 +52,17 @@ public class VideoController {
     public ResponseEntity<List<VideoDto>> getAllVideoData() {
         List<Video> allVideoData = videoService.getAllVideoData();
         List<VideoDto> allVideoDataDto = allVideoData.stream()
-                .map(v -> VideoMapper.toDto(v, likeService.getVideoLikeCount(v.getId())))
+                .map(VideoMapper::toDto)
                 .toList();
 
         return ResponseEntity.status(HttpStatus.OK).body(allVideoDataDto);
+    }
+
+    @GetMapping("/recommendations")
+    public ResponseEntity<List<VideoDto>> getRecommendations(@AuthenticationPrincipal UserDetails user) {
+        List<Video> recommendations = recommendationService.getRecommendations(user.getUsername());
+
+        return ResponseEntity.ok(recommendations.stream().map(VideoMapper::toDto).toList());
     }
 
     public record VideoUploadRequest(String title, String description) {}

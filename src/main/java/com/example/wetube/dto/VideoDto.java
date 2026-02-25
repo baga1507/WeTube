@@ -1,5 +1,5 @@
 package com.example.wetube.dto;
 
-public record VideoDto(Long id, String title, String description, UserDto userDto, Long likeCount) {
+public record VideoDto(Long id, String title, String description, UserDto userDto, Long views, Long likeCount) {
 
 }

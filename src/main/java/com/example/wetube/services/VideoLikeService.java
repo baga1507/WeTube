@@ -35,6 +35,8 @@ public class VideoLikeService {
 
         VideoLike videoLike = new VideoLike(video, user);
         videoLikeRepository.save(videoLike);
+
+        video.setLikeCount(video.getLikeCount() + 1);
     }
 
     @Transactional
@@ -45,8 +47,9 @@ public class VideoLikeService {
                 .orElseThrow(() -> new VideoNotFoundException(videoId));
 
         VideoLikeId id = new VideoLikeId(video.getId(), user.getId());
-
         videoLikeRepository.deleteById(id);
+
+        video.setLikeCount(video.getLikeCount() - 1);
     }
 
     public Long getVideoLikeCount(Long videoId) {
