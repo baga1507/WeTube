@@ -65,5 +65,12 @@ public class VideoController {
         return ResponseEntity.ok(recommendations.stream().map(VideoMapper::toDto).toList());
     }
 
+    @PutMapping("/{id}/view")
+    public ResponseEntity<Void> incrementViewCount(@PathVariable Long id) {
+        videoService.incrementViewCount(id);
+
+        return ResponseEntity.ok().build();
+    }
+
     public record VideoUploadRequest(String title, String description) {}
 }

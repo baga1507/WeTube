@@ -83,4 +83,11 @@ public class VideoService {
     public List<Video> getAllVideoData() {
         return videoRepository.findAll();
     }
+
+    public void incrementViewCount(Long videoId) {
+        Video video = videoRepository.findById(videoId)
+                .orElseThrow(() -> new VideoNotFoundException(videoId));
+
+        video.setViews(video.getViews() + 1);
+    }
 }

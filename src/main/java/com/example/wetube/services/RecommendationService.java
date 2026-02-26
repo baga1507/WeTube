@@ -1,6 +1,5 @@
 package com.example.wetube.services;
 
-import com.example.wetube.entities.SubscriptionId;
 import com.example.wetube.entities.User;
 import com.example.wetube.entities.Video;
 import com.example.wetube.exceptions.UserNotFoundException;
@@ -13,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 import static java.time.temporal.ChronoUnit.HOURS;
 
@@ -27,18 +27,18 @@ public class RecommendationService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(username));
         List<Video> newestVideos = videoRepository.findTop100ByOrderByCreatedAtDesc();
+        Set<Long> subscribedTo = subscriptionRepository.findSubscribedChannelIds(user.getId());
 
         return newestVideos.stream()
-                .sorted(Comparator.comparingDouble((Video v) -> rateVideo(v, user)).reversed())
+                .sorted(Comparator.comparingDouble((Video v) -> rateVideo(v, subscribedTo)).reversed())
                 .limit(20)
                 .toList();
     }
 
-    private double rateVideo(Video video, User user) {
+    private double rateVideo(Video video, Set<Long> subscribedTo) {
         double score = 0;
 
-        SubscriptionId subscriptionId = new SubscriptionId(user.getId(), video.getUser().getId());
-        if (subscriptionRepository.existsById(subscriptionId)) {
+        if (subscribedTo.contains(video.getId())) {
             score += 100;
         }
 
