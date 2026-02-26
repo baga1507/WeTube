@@ -32,6 +32,7 @@ public class CommentService {
         comment.setText(text);
         comment.setVideo(video);
         comment.setUser(user);
+        comment.setLikeCount(0L);
         return commentRepository.save(comment);
     }
 

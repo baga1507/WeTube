@@ -43,21 +43,24 @@ public class VideoService {
 
         try {
             s3Client.putObject(PutObjectRequest.builder()
-                        .bucket(bucketName)
-                        .key(key)
-                        .build(),
+                            .bucket(bucketName)
+                            .key(key)
+                            .build(),
                     RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+
             Video video = new Video();
             video.setFilename(key);
             video.setTitle(title);
             video.setDescription(description);
             video.setUser(user);
+            video.setViews(0L);
+            video.setLikeCount(0L);
             return videoRepository.save(video);
         } catch (Exception e) {
             s3Client.deleteObject(DeleteObjectRequest.builder()
-                        .bucket(bucketName)
-                        .key(key)
-                        .build());
+                    .bucket(bucketName)
+                    .key(key)
+                    .build());
             throw new VideoNotSavedException("Couldn't upload the video");
         }
     }
