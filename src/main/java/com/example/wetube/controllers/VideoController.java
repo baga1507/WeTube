@@ -8,6 +8,7 @@ import com.example.wetube.services.VideoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +16,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -58,10 +57,11 @@ public class VideoController {
     }
 
     @GetMapping("/recommendations")
-    public ResponseEntity<List<VideoDto>> getRecommendations(@AuthenticationPrincipal UserDetails user) {
-        List<Video> recommendations = recommendationService.getRecommendations(user.getUsername());
+    public Slice<VideoDto> getRecommendations(Pageable pageable,
+                                              @AuthenticationPrincipal UserDetails user) {
+        Slice<Video> recommendations = recommendationService.getRecommendations(user.getUsername(), pageable);
 
-        return ResponseEntity.ok(recommendations.stream().map(VideoMapper::toDto).toList());
+        return recommendations.map(VideoMapper::toDto);
     }
 
     @PutMapping("/{id}/view")

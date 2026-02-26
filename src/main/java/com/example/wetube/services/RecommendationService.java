@@ -7,6 +7,9 @@ import com.example.wetube.repositories.SubscriptionRepository;
 import com.example.wetube.repositories.UserRepository;
 import com.example.wetube.repositories.VideoRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,16 +26,18 @@ public class RecommendationService {
     private final VideoRepository videoRepository;
     private final SubscriptionRepository subscriptionRepository;
 
-    public List<Video> getRecommendations(String username) {
+    public Slice<Video> getRecommendations(String username, Pageable pageable) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(username));
-        List<Video> newestVideos = videoRepository.findTop100ByOrderByCreatedAtDesc();
+        Slice<Video> videoSlice = videoRepository.findAllByOrderByCreatedAtDesc(pageable);
         Set<Long> subscribedTo = subscriptionRepository.findSubscribedChannelIds(user.getId());
 
-        return newestVideos.stream()
+        List<Video> sorted = videoSlice.stream()
                 .sorted(Comparator.comparingDouble((Video v) -> rateVideo(v, subscribedTo)).reversed())
                 .limit(20)
                 .toList();
+
+        return new SliceImpl<>(sorted, pageable, videoSlice.hasContent());
     }
 
     private double rateVideo(Video video, Set<Long> subscribedTo) {
