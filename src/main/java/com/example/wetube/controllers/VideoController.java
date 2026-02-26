@@ -6,6 +6,8 @@ import com.example.wetube.mappers.VideoMapper;
 import com.example.wetube.services.RecommendationService;
 import com.example.wetube.services.VideoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -48,14 +50,11 @@ public class VideoController {
         return ResponseEntity.status(HttpStatus.OK).body(link);
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<List<VideoDto>> getAllVideoData() {
-        List<Video> allVideoData = videoService.getAllVideoData();
-        List<VideoDto> allVideoDataDto = allVideoData.stream()
-                .map(VideoMapper::toDto)
-                .toList();
+    @GetMapping
+    public Page<VideoDto> getAllVideoData(Pageable pageable) {
+        Page<Video> allVideoData = videoService.getAllVideoData(pageable);
 
-        return ResponseEntity.status(HttpStatus.OK).body(allVideoDataDto);
+        return allVideoData.map(VideoMapper::toDto);
     }
 
     @GetMapping("/recommendations")

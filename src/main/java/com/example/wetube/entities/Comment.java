@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity(name = "comments")
 @NoArgsConstructor
@@ -24,4 +27,10 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @Column
+    private Long likeCount;
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 }

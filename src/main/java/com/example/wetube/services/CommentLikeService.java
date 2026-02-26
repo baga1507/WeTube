@@ -30,6 +30,8 @@ public class CommentLikeService {
 
         CommentLike videoLike = new CommentLike(comment, user);
         commentLikeRepository.save(videoLike);
+
+        comment.setLikeCount(comment.getLikeCount() + 1);
     }
 
     @Transactional
@@ -40,8 +42,9 @@ public class CommentLikeService {
                 .orElseThrow(() -> new VideoNotFoundException(videoId));
 
         CommentLikeId id = new CommentLikeId(comment.getId(), user.getId());
-
         commentLikeRepository.deleteById(id);
+
+        comment.setLikeCount(comment.getLikeCount() - 1);
     }
 
     public Long getVideoLikeCount(Long videoId) {

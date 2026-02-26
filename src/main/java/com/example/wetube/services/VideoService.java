@@ -8,6 +8,8 @@ import com.example.wetube.repositories.UserRepository;
 import com.example.wetube.repositories.VideoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,7 +23,6 @@ import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignReques
 import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 
 import java.time.Duration;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -80,8 +81,8 @@ public class VideoService {
         return presignedRequest.url().toString();
     }
 
-    public List<Video> getAllVideoData() {
-        return videoRepository.findAll();
+    public Page<Video> getAllVideoData(Pageable pageable) {
+        return videoRepository.findAll(pageable);
     }
 
     public void incrementViewCount(Long videoId) {

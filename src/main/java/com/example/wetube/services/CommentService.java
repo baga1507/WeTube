@@ -9,10 +9,10 @@ import com.example.wetube.repositories.CommentRepository;
 import com.example.wetube.repositories.UserRepository;
 import com.example.wetube.repositories.VideoRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -35,11 +35,11 @@ public class CommentService {
         return commentRepository.save(comment);
     }
 
-    public List<Comment> getVideoComments(Long videoId) {
-        return commentRepository.findAllByVideoId(videoId);
+    public Slice<Comment> getVideoComments(Long videoId, Pageable pageable) {
+        return commentRepository.findAllByVideoId(videoId, pageable);
     }
 
-    public List<Comment> getAllUserComments(Long userId) {
-        return commentRepository.findAllByUserId(userId);
+    public Slice<Comment> getAllUserComments(Long userId, Pageable pageable) {
+        return commentRepository.findAllByUserId(userId, pageable);
     }
 }
