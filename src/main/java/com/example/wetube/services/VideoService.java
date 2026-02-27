@@ -1,13 +1,17 @@
 package com.example.wetube.services;
 
+import com.example.wetube.dto.VideoDto;
 import com.example.wetube.entities.User;
 import com.example.wetube.entities.Video;
 import com.example.wetube.exceptions.VideoNotFoundException;
 import com.example.wetube.exceptions.VideoNotSavedException;
+import com.example.wetube.mappers.VideoMapper;
 import com.example.wetube.repositories.UserRepository;
 import com.example.wetube.repositories.VideoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -37,7 +41,8 @@ public class VideoService {
     private String bucketName;
 
     @Transactional
-    public Video uploadVideo(MultipartFile file, String title, String description, String username) {
+    @CachePut(value = "VIDEO_CACHE", key = "#result.id")
+    public VideoDto uploadVideo(MultipartFile file, String title, String description, String username) {
         String key = UUID.randomUUID() + "_" + file.getOriginalFilename();
         User user = userRepository.findByUsername(username).orElseThrow();
 
@@ -55,7 +60,9 @@ public class VideoService {
             video.setUser(user);
             video.setViews(0L);
             video.setLikeCount(0L);
-            return videoRepository.save(video);
+            video = videoRepository.save(video);
+
+            return VideoMapper.toDto(video);
         } catch (Exception e) {
             s3Client.deleteObject(DeleteObjectRequest.builder()
                     .bucket(bucketName)
@@ -65,8 +72,11 @@ public class VideoService {
         }
     }
 
-    public Video getVideoData(Long id) {
-        return videoRepository.findById(id).orElseThrow(() -> new VideoNotFoundException(id));
+    @Cacheable(value = "VIDEO_CACHE", key = "#id")
+    public VideoDto getVideoData(Long id) {
+        Video video = videoRepository.findById(id).orElseThrow(() -> new VideoNotFoundException(id));
+
+        return VideoMapper.toDto(video);
     }
 
     public String getVideoLink(Long id) {
@@ -88,6 +98,7 @@ public class VideoService {
         return videoRepository.findAll(pageable);
     }
 
+    @Transactional
     public void incrementViewCount(Long videoId) {
         Video video = videoRepository.findById(videoId)
                 .orElseThrow(() -> new VideoNotFoundException(videoId));

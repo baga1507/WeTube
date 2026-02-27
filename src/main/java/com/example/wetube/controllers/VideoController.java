@@ -1,5 +1,6 @@
 package com.example.wetube.controllers;
 
+import com.example.wetube.dto.PaginatedRecommendationsDto;
 import com.example.wetube.dto.VideoDto;
 import com.example.wetube.entities.Video;
 import com.example.wetube.mappers.VideoMapper;
@@ -8,7 +9,6 @@ import com.example.wetube.services.VideoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,18 +28,16 @@ public class VideoController {
     public ResponseEntity<VideoDto> uploadVideo(@AuthenticationPrincipal UserDetails user,
                                                 @RequestPart("file") MultipartFile file,
                                                 @RequestPart("metadata") VideoUploadRequest metadata) {
-        Video createdVideo = videoService.uploadVideo(file, metadata.title, metadata.description, user.getUsername());
-        VideoDto createdVideoDto = VideoMapper.toDto(createdVideo);
+        VideoDto createdVideo = videoService.uploadVideo(file, metadata.title, metadata.description, user.getUsername());
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdVideoDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdVideo);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<VideoDto> getVideoData(@PathVariable Long id) {
-        Video video = videoService.getVideoData(id);
-        VideoDto videoDto = VideoMapper.toDto(video);
+        VideoDto videoData = videoService.getVideoData(id);
 
-        return ResponseEntity.ok(videoDto);
+        return ResponseEntity.ok(videoData);
     }
 
     @GetMapping("/{id}/stream")
@@ -57,11 +55,9 @@ public class VideoController {
     }
 
     @GetMapping("/recommendations")
-    public Slice<VideoDto> getRecommendations(Pageable pageable,
-                                              @AuthenticationPrincipal UserDetails user) {
-        Slice<Video> recommendations = recommendationService.getRecommendations(user.getUsername(), pageable);
-
-        return recommendations.map(VideoMapper::toDto);
+    public PaginatedRecommendationsDto getRecommendations(Pageable pageable,
+                                                          @AuthenticationPrincipal UserDetails user) {
+        return recommendationService.getRecommendations(user.getUsername(), pageable);
     }
 
     @PutMapping("/{id}/view")

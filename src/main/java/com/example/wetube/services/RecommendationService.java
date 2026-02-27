@@ -1,15 +1,18 @@
 package com.example.wetube.services;
 
+import com.example.wetube.dto.PaginatedRecommendationsDto;
+import com.example.wetube.dto.VideoDto;
 import com.example.wetube.entities.User;
 import com.example.wetube.entities.Video;
 import com.example.wetube.exceptions.UserNotFoundException;
+import com.example.wetube.mappers.VideoMapper;
 import com.example.wetube.repositories.SubscriptionRepository;
 import com.example.wetube.repositories.UserRepository;
 import com.example.wetube.repositories.VideoRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -26,18 +29,25 @@ public class RecommendationService {
     private final VideoRepository videoRepository;
     private final SubscriptionRepository subscriptionRepository;
 
-    public Slice<Video> getRecommendations(String username, Pageable pageable) {
+    @Cacheable(value = "RECOMMENDATION_CACHE", key = "#username + '-' + #pageable.pageNumber + '-' + #pageable.getPageSize()")
+    public PaginatedRecommendationsDto getRecommendations(String username, Pageable pageable) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(username));
         Slice<Video> videoSlice = videoRepository.findAllByOrderByCreatedAtDesc(pageable);
         Set<Long> subscribedTo = subscriptionRepository.findSubscribedChannelIds(user.getId());
 
-        List<Video> sorted = videoSlice.stream()
+        List<VideoDto> sorted = videoSlice.stream()
                 .sorted(Comparator.comparingDouble((Video v) -> rateVideo(v, subscribedTo)).reversed())
+                .map(VideoMapper::toDto)
                 .limit(20)
                 .toList();
 
-        return new SliceImpl<>(sorted, pageable, videoSlice.hasContent());
+        return new PaginatedRecommendationsDto(
+                sorted,
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                videoSlice.hasNext()
+        );
     }
 
     private double rateVideo(Video video, Set<Long> subscribedTo) {
