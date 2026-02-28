@@ -2,7 +2,6 @@ package com.example.wetube.controllers;
 
 import com.example.wetube.services.VideoLikeService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -17,23 +16,19 @@ public class VideoLikeController {
     private final VideoLikeService videoLikeService;
 
     @PostMapping("/videos/{videoId}/likes")
-    public ResponseEntity<Void> like(@AuthenticationPrincipal UserDetails user,
+    public void like(@AuthenticationPrincipal UserDetails user,
                                   @PathVariable Long videoId) {
         videoLikeService.like(videoId, user.getUsername());
-
-        return ResponseEntity.ok().build();
     }
 
     @GetMapping("videos/{videoId}/likes")
-    public ResponseEntity<Long> getVideoLikeCount(@PathVariable Long videoId) {
-        return ResponseEntity.ok(videoLikeService.getVideoLikeCount(videoId));
+    public Long getVideoLikeCount(@PathVariable Long videoId) {
+        return videoLikeService.getVideoLikeCount(videoId);
     }
 
     @DeleteMapping("/videos/{videoId}/likes")
-    public ResponseEntity<Void> unlike(@AuthenticationPrincipal UserDetails user,
+    public void unlike(@AuthenticationPrincipal UserDetails user,
                                      @PathVariable Long videoId) {
         videoLikeService.unlike(videoId, user.getUsername());
-
-        return ResponseEntity.ok().build();
     }
 }

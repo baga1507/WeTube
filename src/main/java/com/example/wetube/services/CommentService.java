@@ -1,10 +1,12 @@
 package com.example.wetube.services;
 
+import com.example.wetube.dto.CommentDto;
 import com.example.wetube.entities.Comment;
 import com.example.wetube.entities.User;
 import com.example.wetube.entities.Video;
 import com.example.wetube.exceptions.UserNotFoundException;
 import com.example.wetube.exceptions.VideoNotFoundException;
+import com.example.wetube.mappers.CommentMapper;
 import com.example.wetube.repositories.CommentRepository;
 import com.example.wetube.repositories.UserRepository;
 import com.example.wetube.repositories.VideoRepository;
@@ -22,7 +24,7 @@ public class CommentService {
     private final UserRepository userRepository;
 
     @Transactional
-    public Comment createComment(String text, Long videoId, String username) {
+    public CommentDto createComment(String text, Long videoId, String username) {
         Video video = videoRepository.findById(videoId)
                 .orElseThrow(() -> new VideoNotFoundException(videoId));
         User user = userRepository.findByUsername(username)
@@ -33,14 +35,15 @@ public class CommentService {
         comment.setVideo(video);
         comment.setUser(user);
         comment.setLikeCount(0L);
-        return commentRepository.save(comment);
+
+        return CommentMapper.toDto(commentRepository.save(comment));
     }
 
-    public Slice<Comment> getVideoComments(Long videoId, Pageable pageable) {
-        return commentRepository.findAllByVideoId(videoId, pageable);
+    public Slice<CommentDto> getVideoComments(Long videoId, Pageable pageable) {
+        return commentRepository.findAllByVideoId(videoId, pageable).map(CommentMapper::toDto);
     }
 
-    public Slice<Comment> getAllUserComments(Long userId, Pageable pageable) {
-        return commentRepository.findAllByUserId(userId, pageable);
+    public Slice<CommentDto> getAllUserComments(Long userId, Pageable pageable) {
+        return commentRepository.findAllByUserId(userId, pageable).map(CommentMapper::toDto);
     }
 }

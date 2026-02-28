@@ -1,7 +1,9 @@
 package com.example.wetube.services;
 
+import com.example.wetube.dto.UserDto;
 import com.example.wetube.entities.User;
 import com.example.wetube.exceptions.UserAlreadyExistsException;
+import com.example.wetube.mappers.UserMapper;
 import com.example.wetube.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,7 +22,7 @@ public class UserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public User registerUser(String username, String password) {
+    public UserDto registerUser(String username, String password) {
         if (userRepository.findByUsername(username).isPresent()) {
             throw new UserAlreadyExistsException("User with this username already exists");
         }
@@ -30,7 +32,7 @@ public class UserService implements UserDetailsService {
         user.setPassword(passwordEncoder.encode(password));
         user.setVideos(new ArrayList<>());
 
-        return userRepository.save(user);
+        return UserMapper.toDto(userRepository.save(user));
     }
 
     @Override

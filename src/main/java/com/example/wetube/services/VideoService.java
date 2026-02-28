@@ -94,8 +94,8 @@ public class VideoService {
         return presignedRequest.url().toString();
     }
 
-    public Page<Video> getAllVideoData(Pageable pageable) {
-        return videoRepository.findAll(pageable);
+    public Page<VideoDto> getAllVideoData(Pageable pageable) {
+        return videoRepository.findAll(pageable).map(VideoMapper::toDto);
     }
 
     @Transactional
