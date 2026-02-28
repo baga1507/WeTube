@@ -9,10 +9,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.net.URI;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,7 +24,7 @@ public class VideoController {
     private final VideoService videoService;
     private final RecommendationService recommendationService;
 
-    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public VideoDto uploadVideo(@AuthenticationPrincipal UserDetails user,
                                                 @RequestPart("file") MultipartFile file,
@@ -35,8 +38,11 @@ public class VideoController {
     }
 
     @GetMapping("/{id}/stream")
-    public String getVideoLink(@PathVariable Long id) {
-        return videoService.getVideoLink(id);
+    public ResponseEntity<Void> stream(@PathVariable Long id) {
+        return ResponseEntity
+                .status(HttpStatus.FOUND)
+                .location(URI.create(videoService.getVideoLink(id)))
+                .build();
     }
 
     @GetMapping
@@ -50,7 +56,8 @@ public class VideoController {
         return recommendationService.getRecommendations(user.getUsername(), pageable);
     }
 
-    @PutMapping("/{id}/view")
+    @PostMapping("/{id}/views")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void incrementViewCount(@PathVariable Long id) {
         videoService.incrementViewCount(id);
     }
