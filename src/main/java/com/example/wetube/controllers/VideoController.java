@@ -1,6 +1,6 @@
 package com.example.wetube.controllers;
 
-import com.example.wetube.dto.PaginatedRecommendationsDto;
+import com.example.wetube.dto.RecommendationPageDto;
 import com.example.wetube.dto.VideoDto;
 import com.example.wetube.services.RecommendationService;
 import com.example.wetube.services.VideoService;
@@ -51,8 +51,8 @@ public class VideoController {
     }
 
     @GetMapping("/recommendations")
-    public PaginatedRecommendationsDto getRecommendations(Pageable pageable,
-                                                          @AuthenticationPrincipal UserDetails user) {
+    public RecommendationPageDto getRecommendations(Pageable pageable,
+                                                    @AuthenticationPrincipal UserDetails user) {
         return recommendationService.getRecommendations(user.getUsername(), pageable);
     }
 

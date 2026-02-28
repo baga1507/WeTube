@@ -2,7 +2,7 @@ package com.example.wetube.dto;
 
 import java.util.List;
 
-public record PaginatedRecommendationsDto(
+public record RecommendationPageDto(
         List<VideoDto> videos,
         int page,
         int size,

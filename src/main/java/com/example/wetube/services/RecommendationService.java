@@ -1,6 +1,6 @@
 package com.example.wetube.services;
 
-import com.example.wetube.dto.PaginatedRecommendationsDto;
+import com.example.wetube.dto.RecommendationPageDto;
 import com.example.wetube.dto.VideoDto;
 import com.example.wetube.entities.User;
 import com.example.wetube.entities.Video;
@@ -29,8 +29,11 @@ public class RecommendationService {
     private final VideoRepository videoRepository;
     private final SubscriptionRepository subscriptionRepository;
 
-    @Cacheable(value = "RECOMMENDATION_CACHE", key = "#username + '-' + #pageable.pageNumber + '-' + #pageable.getPageSize()")
-    public PaginatedRecommendationsDto getRecommendations(String username, Pageable pageable) {
+    @Cacheable(
+            value = "RECOMMENDATION_CACHE",
+            key = "#username + '-' + #pageable.pageNumber + '-' + #pageable.getPageSize()"
+    )
+    public RecommendationPageDto getRecommendations(String username, Pageable pageable) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(username));
         Slice<Video> videoSlice = videoRepository.findAllByOrderByCreatedAtDesc(pageable);
@@ -42,7 +45,7 @@ public class RecommendationService {
                 .limit(20)
                 .toList();
 
-        return new PaginatedRecommendationsDto(
+        return new RecommendationPageDto(
                 sorted,
                 pageable.getPageNumber(),
                 pageable.getPageSize(),
