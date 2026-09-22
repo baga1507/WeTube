@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import LoginForm from "./LoginForm.jsx";
-import Recommendations from "./Recommendations.jsx";
-import ProtectedRoute from "./ProtectedRoute.jsx";
+import LoginForm from "./pages/login/LoginForm.jsx";
+import Recommendations from "./pages/recommendations/Recommendations.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>

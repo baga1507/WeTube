@@ -1,0 +1,19 @@
+.recommendations-container {
+    background-color: #f8fafc;
+    min-height: 100vh;
+    padding: 30px;
+}
+
+h2 {
+    color: #1a1a1a;
+    border-left: 4px solid #cc0000;
+    padding-left: 12px;
+    margin-bottom: 24px;
+}
+
+.recommendation-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 360px));
+    gap: 24px;
+    justify-content: start;
+}

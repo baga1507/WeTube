@@ -1,11 +1,10 @@
-import preview from "./assets/preview.png";
+import sampleThumbnail from "../../assets/sample_thumbnail.png";
 import "./VideoRecommendation.css";
 
 function VideoRecommendation({
-                                 thumbnailUrl = preview, // Defaults to imported preview image if not provided
+                                 thumbnailUrl = sampleThumbnail,
                                  title = "Building a Secure Auth System with React and Spring Boot 3",
                                  channelName = "Dev Channel",
-                                 channelAvatar = "https://via.placeholder.com/36",
                                  views = "120K views",
                                  uploadedAt = "2 days ago",
                                  duration = "14:20"
