@@ -1,8 +1,17 @@
-// src/Recommendations.jsx
 import VideoRecommendation from "../../components/videos/VideoRecommendation.jsx";
 import "./Recommendations.css"
+import {useEffect, useState} from "react";
+import api from "../../api/axios.js";
 
 function Recommendations() {
+    const [videos, setVideos] = useState([]);
+
+    useEffect(() => {
+        api.get("/videos/recommendations")
+            .then(response => setVideos(response.data.videos))
+            .catch(error => console.error(error));
+    }, []);
+
     return (
         <div className="recommendations-container">
             <h2>
@@ -10,9 +19,14 @@ function Recommendations() {
             </h2>
 
             <div className="recommendation-list">
-                <VideoRecommendation />
-                <VideoRecommendation title="Spring Boot 3 + React 19 Full Stack Guide" />
-                <VideoRecommendation title="Building Custom CSS Grid Layouts" />
+                {videos.map(v =>
+                    <VideoRecommendation
+                        key={v.id}
+                        title={v.title}
+                        channelName={v.userDto.username}
+                        views = {v.views}
+                    />
+                )}
             </div>
         </div>
     );

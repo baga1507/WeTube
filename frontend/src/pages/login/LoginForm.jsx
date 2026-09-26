@@ -28,9 +28,6 @@ function LoginForm() {
         const encoded = btoa(rawString);
         const authHeader = `Basic ${encoded}`;
 
-        console.log("Raw credentials string:", rawString);
-        console.log("Generated Header:", authHeader);
-
         try {
             await api.post(
                 '/users/login',
