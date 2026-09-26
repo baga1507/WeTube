@@ -1,4 +1,4 @@
-import VideoRecommendation from "../../components/videos/VideoRecommendation.jsx";
+import VideoRecommendation from "../../components/video_recommendation/VideoRecommendation.jsx";
 import "./Recommendations.css"
 import {useEffect, useState} from "react";
 import api from "../../api/axios.js";
@@ -22,6 +22,7 @@ function Recommendations() {
                 {videos.map(v =>
                     <VideoRecommendation
                         key={v.id}
+                        id={v.id}
                         title={v.title}
                         channelName={v.userDto.username}
                         views = {v.views}

@@ -1,16 +1,26 @@
 import sampleThumbnail from "../../assets/sample_thumbnail.png";
 import "./VideoRecommendation.css";
+import {useNavigate} from "react-router-dom";
 
 function VideoRecommendation({
                                  thumbnailUrl = sampleThumbnail,
+                                 id,
                                  title = "Building a Secure Auth System with React and Spring Boot 3",
                                  channelName = "Dev Channel",
                                  views = "120K views",
                                  uploadedAt = "2 days ago",
                                  duration = "14:20"
                              }) {
+    const navigate = useNavigate();
+
+    const handleClick = () => {
+        if (id) {
+            navigate(`/watch/${id}`);
+        }
+    }
+
     return (
-        <article className="video-card">
+        <article className="video-card" onClick={handleClick}>
             <div className="thumbnail-wrapper">
                 <img src={thumbnailUrl} alt={title} className="thumbnail" />
                 <span className="duration-badge">{duration}</span>
