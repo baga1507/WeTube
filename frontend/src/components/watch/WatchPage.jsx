@@ -17,9 +17,12 @@ function WatchPage() {
             try {
                 const response = await api.get(`/videos/${id}`);
                 const data = response.data;
+                const isLiked = await api.get(`/videos/${id}/like`).then(response => response.data);
 
                 setVideoData(data);
-                setLikes(data.likesCount || data.likes || 0);
+                setIsLiked(isLiked);
+                setLikes(data.likeCount);
+                console.log(response.data);
             } catch (error) {
                 console.error('Failed to fetch video details:', error);
             } finally {
@@ -27,7 +30,9 @@ function WatchPage() {
             }
         };
 
-        if (id) fetchVideo();
+        if (id) {
+            fetchVideo();
+        }
     }, [id]);
 
     const handleLikeToggle = async () => {
@@ -37,9 +42,9 @@ function WatchPage() {
 
         try {
             if (!isLiked) {
-                await api.post(`/videos/${id}/likes`);
+                await api.post(`/videos/${id}/like`);
             } else {
-                await api.delete(`/videos/${id}/likes`);
+                await api.delete(`/videos/${id}/like`);
             }
         } catch (error) {
             console.error('Failed to update like status on server:', error);
@@ -54,7 +59,7 @@ function WatchPage() {
         : videoData.user?.username || videoData.channelName || 'WeTube Creator';
 
     const token = localStorage.getItem('token');
-    const streamUrl = videoData.streamUrl || `http://localhost:8080/api/v1/videos/${id}/stream?token=${encodeURIComponent(token)}`;
+    const streamUrl = `http://localhost:8080/api/v1/videos/${id}/stream?token=${encodeURIComponent(token)}`;
 
     return (
         <div className="watch-page-container">

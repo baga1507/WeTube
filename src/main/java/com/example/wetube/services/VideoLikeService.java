@@ -39,6 +39,17 @@ public class VideoLikeService {
         video.setLikeCount(video.getLikeCount() + 1);
     }
 
+    public boolean checkLike(Long videoId, String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(username));
+        Video video = videoRepository.findById(videoId)
+                .orElseThrow(() -> new VideoNotFoundException(videoId));
+
+        VideoLikeId id = new VideoLikeId(video.getId(), user.getId());
+
+        return videoLikeRepository.existsById(id);
+    }
+
     @Transactional
     public void unlike(Long videoId, String username) {
         User user = userRepository.findByUsername(username)
@@ -47,9 +58,11 @@ public class VideoLikeService {
                 .orElseThrow(() -> new VideoNotFoundException(videoId));
 
         VideoLikeId id = new VideoLikeId(video.getId(), user.getId());
-        videoLikeRepository.deleteById(id);
 
-        video.setLikeCount(video.getLikeCount() - 1);
+        if (videoLikeRepository.existsById(id)){
+            videoLikeRepository.deleteById(id);
+            video.setLikeCount(video.getLikeCount() - 1);
+        }
     }
 
     public Long getVideoLikeCount(Long videoId) {
