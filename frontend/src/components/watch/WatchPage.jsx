@@ -54,9 +54,7 @@ function WatchPage() {
     if (loading) return <div className="watch-status">Loading video...</div>;
     if (!videoData) return <div className="watch-status">Video not found.</div>;
 
-    const uploaderName = typeof videoData.channelName === 'object'
-        ? videoData.channelName?.username
-        : videoData.user?.username || videoData.channelName || 'WeTube Creator';
+    const uploaderName = videoData.userDto.username;
 
     const token = localStorage.getItem('token');
     const streamUrl = `http://localhost:8080/api/v1/videos/${id}/stream?token=${encodeURIComponent(token)}`;
